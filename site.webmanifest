@@ -1,0 +1,17 @@
+{
+  "name": "RivLabs",
+  "short_name": "RivLabs",
+  "description": "Una idea tecnológica útil en menos de un minuto.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#070811",
+  "theme_color": "#070811",
+  "icons": [
+    {
+      "src": "./assets/brand/rivlabs-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
