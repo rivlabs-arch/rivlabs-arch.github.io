@@ -21,4 +21,3 @@ Antes de publicar cambios, `scripts/validate-content.mjs` comprueba la lista per
 ## Tecnología
 
 Sitio estático sin dependencias, analítica, cookies ni fuentes externas. Está preparado para publicarse directamente desde la raíz de la rama principal con GitHub Pages.
-# rivlabs-arch.github.io
