@@ -851,6 +851,27 @@ code {
   font-weight: 650;
 }
 
+.post-read-more {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  color: #58d8ff;
+  font-size: 0.78rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.post-read-more span {
+  transition: transform 160ms ease;
+}
+
+.post-read-more:hover span,
+.post-read-more:focus-visible span {
+  transform: translateX(3px);
+}
+
 .empty-state {
   min-height: 320px;
   place-items: center;
@@ -1190,7 +1211,7 @@ code {
 
 .footer-brand p {
   margin: 9px 0 0;
-  color: #9098aa;
+  color: #a6aec1;
   font-size: 0.75rem;
   letter-spacing: 0.08em;
 }
@@ -1200,7 +1221,7 @@ code {
   flex-wrap: wrap;
   justify-content: end;
   gap: 25px;
-  color: #98a0b2;
+  color: #b0b8cb;
   font-size: 0.8rem;
 }
 
@@ -1220,7 +1241,7 @@ code {
   margin: 3px 0 0;
   padding-top: 25px;
   border-top: 1px solid var(--line);
-  color: #858da0;
+  color: #a0a9bd;
   font-size: 0.7rem;
 }
 

@@ -8,19 +8,20 @@
     series: "Tech Tips",
     seriesLabel: "TECH TIP #001",
     title: "¿Has perdido cambios en Git?",
+    publicUrl: "./git/recuperar-commits-con-git-reflog/",
     topic: "git reflog",
     pillar: "Git",
     publishedDate: "2026-07-26",
     tags: ["Git", "Terminal"],
     summary: "Git conserva un historial local de los movimientos de HEAD que puede ayudarte a localizar commits y estados que ya no aparecen en el historial normal.",
     slides: [
-      ["tech_tip_001_slide_01.png", "Portada: ¿Has perdido cambios en Git? Puede que no."],
-      ["tech_tip_001_slide_02.png", "El problema: después de ejecutar git reset --hard parece que se han perdido todos los cambios."],
-      ["tech_tip_001_slide_03.png", "El descubrimiento: Git guarda más información de la que imaginas mediante git reflog."],
-      ["tech_tip_001_slide_04.png", "Ejemplo: ejecuta git reflog, identifica el hash y recupéralo con git checkout o crea una rama nueva."],
-      ["tech_tip_001_slide_05.png", "Git reflog permite recuperar commits borrados, ramas eliminadas, resets y posiciones anteriores de HEAD."],
-      ["tech_tip_001_slide_06.png", "Idea final: antes de entrar en pánico, ejecuta git reflog."],
-      ["tech_tip_001_slide_07.png", "Cierre: ¿Conocías git reflog? Invitación a comentar, guardar y compartir."]
+      ["tech_tip_001_slide_01.webp", "Portada: ¿Has perdido cambios en Git? Puede que no."],
+      ["tech_tip_001_slide_02.webp", "El problema: después de ejecutar git reset --hard parece que se han perdido todos los cambios."],
+      ["tech_tip_001_slide_03.webp", "El descubrimiento: Git guarda más información de la que imaginas mediante git reflog."],
+      ["tech_tip_001_slide_04.webp", "Ejemplo: ejecuta git reflog, identifica el hash y recupéralo con git checkout o crea una rama nueva."],
+      ["tech_tip_001_slide_05.webp", "Git reflog permite recuperar commits borrados, ramas eliminadas, resets y posiciones anteriores de HEAD."],
+      ["tech_tip_001_slide_06.webp", "Idea final: antes de entrar en pánico, ejecuta git reflog."],
+      ["tech_tip_001_slide_07.webp", "Cierre: ¿Conocías git reflog? Invitación a comentar, guardar y compartir."]
     ].map(([file, alt]) => ({
       src: `./assets/posts/tech-tip-001/${file}`,
       width: 1254,
@@ -164,7 +165,16 @@
         tags.append(chip);
       });
 
-      body.append(meta, title, summary, tags);
+      const readMore = document.createElement("a");
+      readMore.className = "post-read-more";
+      readMore.href = post.publicUrl || `#${post.id}`;
+      readMore.textContent = "Leer la guía completa ";
+      const readMoreArrow = document.createElement("span");
+      readMoreArrow.setAttribute("aria-hidden", "true");
+      readMoreArrow.textContent = "→";
+      readMore.append(readMoreArrow);
+
+      body.append(meta, title, summary, tags, readMore);
       article.append(coverButton, body);
       fragment.append(article);
     });
@@ -280,6 +290,7 @@
     state.activePost = post;
     state.lastFocus = document.activeElement;
     renderReader(post);
+    window.RivLabsAnalytics?.track("post_open", { postId: post.id });
 
     if (!elements.reader.open) elements.reader.showModal();
     document.body.classList.add("reader-open");
@@ -348,12 +359,15 @@
 
   async function shareActivePost() {
     if (!state.activePost) return;
-    const url = `${window.location.origin}${window.location.pathname}#${state.activePost.id}`;
+    const url = state.activePost.publicUrl
+      ? new URL(state.activePost.publicUrl, window.location.href).href
+      : `${window.location.origin}${window.location.pathname}#${state.activePost.id}`;
     const shareData = {
       title: `${state.activePost.seriesLabel} · RivLabs`,
       text: `${state.activePost.title} — ${state.activePost.summary}`,
       url
     };
+    window.RivLabsAnalytics?.track("share", { postId: state.activePost.id });
 
     try {
       if (navigator.share) {

@@ -18,6 +18,6 @@ Las publicaciones visibles se generan desde la lista explícita `content/publish
 
 Antes de publicar cambios, `scripts/validate-content.mjs` comprueba la lista permitida, los campos públicos y la existencia de todas las imágenes.
 
-## Tecnología
+## Tecnología y privacidad
 
-Sitio estático sin dependencias, analítica, cookies ni fuentes externas. Está preparado para publicarse directamente desde la raíz de la rama principal con GitHub Pages.
+Sitio estático sin dependencias ni fuentes externas. Registra métricas anónimas de navegación en un colector propio, respeta la señal `Do Not Track`, no usa cookies y no conserva direcciones IP. Está preparado para publicarse directamente desde la raíz de la rama principal con GitHub Pages.

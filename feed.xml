@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>RivLabs</title>
+    <link>https://rivlabs-arch.github.io/</link>
+    <description>Una idea tecnológica útil en menos de un minuto.</description>
+    <language>es-ES</language>
+    <atom:link href="https://rivlabs-arch.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Cómo recuperar un commit perdido con git reflog</title>
+      <link>https://rivlabs-arch.github.io/git/recuperar-commits-con-git-reflog/</link>
+      <guid isPermaLink="true">https://rivlabs-arch.github.io/git/recuperar-commits-con-git-reflog/</guid>
+      <pubDate>Sun, 26 Jul 2026 10:00:00 +0200</pubDate>
+      <description>Localiza un commit que ya no aparece en git log y recupéralo de forma segura en una rama nueva.</description>
+      <category>Git</category>
+      <category>Tech Tips</category>
+    </item>
+  </channel>
+</rss>

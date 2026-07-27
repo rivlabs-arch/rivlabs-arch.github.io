@@ -8,7 +8,7 @@ const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
 const allowedPostKeys = new Set([
   "id", "published", "number", "series", "seriesLabel", "title", "subtitle",
   "topic", "pillar", "publishedDate", "readingTime", "summary", "takeaway",
-  "tags", "slides"
+  "tags", "slides", "publicUrl"
 ]);
 const forbiddenTerms = [
   "fechaPrevista", "notes", "notas", "briefing", "caption", "hashtags",
@@ -25,6 +25,7 @@ for (const [index, post] of (manifest.posts || []).entries()) {
   if (post.published !== true) errors.push(`${label}: solo se permiten publicaciones con published: true.`);
   if (!post.id || !post.series || !post.title || !post.publishedDate) errors.push(`${label}: faltan campos públicos obligatorios.`);
   if (!Array.isArray(post.slides) || post.slides.length === 0) errors.push(`${label}: no contiene diapositivas.`);
+  if (!post.publicUrl?.startsWith("./") || !post.publicUrl.endsWith("/")) errors.push(`${label}: publicUrl no es una ruta pública válida.`);
 
   for (const key of Object.keys(post)) {
     if (!allowedPostKeys.has(key)) errors.push(`${label}: el campo no permitido "${key}" debe eliminarse.`);
@@ -44,6 +45,14 @@ for (const [index, post] of (manifest.posts || []).entries()) {
       await access(resolve(root, slide.src.slice(2)));
     } catch {
       errors.push(`${label}, slide ${slideIndex + 1}: no existe ${slide.src}.`);
+    }
+  }
+
+  if (post.publicUrl?.startsWith("./")) {
+    try {
+      await access(resolve(root, post.publicUrl.slice(2), "index.html"));
+    } catch {
+      errors.push(`${label}: no existe la página pública ${post.publicUrl}.`);
     }
   }
 }

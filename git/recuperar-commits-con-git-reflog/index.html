@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070811">
+  <meta name="description" content="Aprende a recuperar un commit perdido después de un reset o rebase con git reflog y una rama de recuperación segura.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="https://rivlabs-arch.github.io/git/recuperar-commits-con-git-reflog/">
+  <link rel="icon" type="image/png" href="../../assets/brand/rivlabs-icon-512.png">
+  <link rel="alternate" type="application/rss+xml" title="RivLabs" href="../../feed.xml">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="RivLabs">
+  <meta property="og:title" content="Cómo recuperar un commit perdido con git reflog">
+  <meta property="og:description" content="Localiza el commit en el historial local de Git y recupéralo en una rama nueva.">
+  <meta property="og:url" content="https://rivlabs-arch.github.io/git/recuperar-commits-con-git-reflog/">
+  <meta property="og:image" content="https://rivlabs-arch.github.io/assets/posts/tech-tip-001/tech_tip_001_slide_01.png">
+  <meta property="og:image:width" content="1254">
+  <meta property="og:image:height" content="1254">
+  <meta property="og:image:alt" content="Portada de TECH TIP #001: ¿Has perdido cambios en Git? Puede que no.">
+  <meta property="article:published_time" content="2026-07-26">
+  <meta property="article:modified_time" content="2026-07-27">
+  <meta property="article:section" content="Git">
+  <meta property="article:tag" content="git reflog">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cómo recuperar un commit perdido con git reflog">
+  <meta name="twitter:description" content="Una guía breve y segura para recuperar estados que ya no ves en git log.">
+  <meta name="twitter:image" content="https://rivlabs-arch.github.io/assets/posts/tech-tip-001/tech_tip_001_slide_01.png">
+  <meta name="twitter:image:alt" content="Portada de TECH TIP #001 sobre git reflog">
+  <title>Cómo recuperar commits con git reflog | RivLabs</title>
+  <link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="../../article.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        "@id": "https://rivlabs-arch.github.io/git/recuperar-commits-con-git-reflog/#article",
+        "headline": "Cómo recuperar un commit perdido con git reflog",
+        "description": "Aprende a localizar y recuperar un commit perdido después de un reset o rebase con git reflog.",
+        "datePublished": "2026-07-26",
+        "dateModified": "2026-07-27",
+        "inLanguage": "es-ES",
+        "mainEntityOfPage": "https://rivlabs-arch.github.io/git/recuperar-commits-con-git-reflog/",
+        "image": "https://rivlabs-arch.github.io/assets/posts/tech-tip-001/tech_tip_001_slide_01.png",
+        "author": { "@id": "https://rivlabs-arch.github.io/#organization" },
+        "publisher": { "@id": "https://rivlabs-arch.github.io/#organization" },
+        "articleSection": "Git",
+        "keywords": ["git reflog", "recuperar commit", "git reset --hard"]
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://rivlabs-arch.github.io/#organization",
+        "name": "RivLabs",
+        "url": "https://rivlabs-arch.github.io/",
+        "logo": "https://rivlabs-arch.github.io/assets/brand/rivlabs-icon-512.png",
+        "sameAs": ["https://www.instagram.com/rivlabs/"]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://rivlabs-arch.github.io/" },
+          { "@type": "ListItem", "position": 2, "name": "Git", "item": "https://rivlabs-arch.github.io/#contenido-publicado" },
+          { "@type": "ListItem", "position": 3, "name": "Cómo recuperar commits con git reflog" }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body data-post-id="tech-tip-001">
+  <a class="skip-link" href="#articulo">Saltar al artículo</a>
+
+  <header class="article-header">
+    <div class="shell article-header-inner">
+      <a class="brand" href="../../" aria-label="RivLabs, inicio">
+        <img src="../../assets/brand/rivlabs-logo.png" alt="RivLabs" width="410" height="82">
+      </a>
+      <nav aria-label="Navegación del artículo">
+        <a href="../../#contenido-publicado">Más contenido</a>
+        <a class="article-nav-cta" href="https://www.instagram.com/rivlabs/" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="articulo" class="article-main">
+    <article>
+      <div class="shell article-hero">
+        <nav class="breadcrumbs" aria-label="Migas de pan">
+          <a href="../../">Inicio</a><span>/</span><a href="../../#contenido-publicado">Git</a><span>/</span><span>git reflog</span>
+        </nav>
+        <div class="article-hero-grid">
+          <div class="article-intro">
+            <p class="eyebrow"><span></span> TECH TIP #001 · GIT</p>
+            <h1>Cómo recuperar un commit perdido con <code>git reflog</code></h1>
+            <p class="article-lede">Un <code>reset</code> o un <code>rebase</code> puede hacer que un commit deje de aparecer en el historial normal. Antes de darlo por perdido, consulta el registro local de movimientos de Git.</p>
+            <div class="article-meta">
+              <time datetime="2026-07-26">26 de julio de 2026</time>
+              <span>5 min de lectura</span>
+              <span>Revisado técnicamente</span>
+            </div>
+          </div>
+          <figure class="article-cover">
+            <img src="../../assets/posts/tech-tip-001/tech_tip_001_slide_01.webp" width="1254" height="1254" fetchpriority="high" alt="Portada: ¿Has perdido cambios en Git? Puede que no.">
+          </figure>
+        </div>
+      </div>
+
+      <div class="shell article-layout">
+        <div class="article-body">
+          <aside class="key-idea">
+            <span>La idea que debes recordar</span>
+            <p><code>git reflog</code> registra localmente dónde han apuntado <code>HEAD</code> y otras referencias. Si el objeto del commit sigue disponible, puedes volver a hacerlo alcanzable creando una rama.</p>
+          </aside>
+
+          <section aria-labelledby="problema">
+            <p class="section-kicker">01 · El problema</p>
+            <h2 id="problema">El commit ya no aparece en <code>git log</code></h2>
+            <p>Imagina que ejecutas un <code>git reset --hard HEAD~2</code> y después descubres que necesitabas uno de los commits anteriores. La rama ha retrocedido y ese commit puede haber desaparecido de <code>git log</code>, pero eso no significa necesariamente que Git haya borrado el objeto de inmediato.</p>
+          </section>
+
+          <section aria-labelledby="buscar">
+            <p class="section-kicker">02 · Localízalo</p>
+            <h2 id="buscar">Consulta los movimientos recientes de <code>HEAD</code></h2>
+            <p>Ejecuta el comando dentro del repositorio en el que hiciste el cambio:</p>
+            <div class="terminal" role="region" aria-label="Ejemplo de git reflog">
+              <div class="terminal-bar"><i></i><i></i><i></i><span>terminal</span></div>
+              <pre><code><span class="prompt">$</span> git reflog
+a1b2c3d HEAD@{0}: reset: moving to HEAD~2
+9f8e7d6 HEAD@{1}: commit: añade autenticación
+4c3b2a1 HEAD@{2}: commit: estructura inicial</code></pre>
+            </div>
+            <p>Cada línea incluye un identificador de commit, una referencia temporal como <code>HEAD@{1}</code> y una explicación del movimiento. Busca la entrada anterior a la operación que causó el problema.</p>
+          </section>
+
+          <section aria-labelledby="recuperar">
+            <p class="section-kicker">03 · Recupéralo</p>
+            <h2 id="recuperar">Crea una rama nueva en el commit correcto</h2>
+            <p>Cuando hayas comprobado el hash, la opción más segura es crear una rama de recuperación. Así no mueves tu rama actual y el commit vuelve a quedar referenciado.</p>
+            <div class="terminal" role="region" aria-label="Crear una rama de recuperación">
+              <div class="terminal-bar"><i></i><i></i><i></i><span>terminal</span></div>
+              <pre><code><span class="prompt">$</span> git switch -c recovery/auth 9f8e7d6</code></pre>
+            </div>
+            <ol class="steps">
+              <li><strong>Inspecciona.</strong> Usa <code>git show 9f8e7d6</code> para confirmar que es el commit que buscas.</li>
+              <li><strong>Protege.</strong> Crea una rama con <code>git switch -c</code> o <code>git branch</code>.</li>
+              <li><strong>Decide.</strong> Desde ahí puedes conservar la rama, hacer <code>cherry-pick</code> o integrar el cambio como corresponda.</li>
+            </ol>
+          </section>
+
+          <section aria-labelledby="limites">
+            <p class="section-kicker">04 · El matiz importante</p>
+            <h2 id="limites">El reflog es local y no dura para siempre</h2>
+            <p>El historial normal de Git se comparte mediante remotos; el reflog no. Describe los movimientos ocurridos en ese clon concreto. Además, las entradas antiguas pueden caducar y los objetos no alcanzables pueden eliminarse durante el mantenimiento del repositorio.</p>
+            <div class="warning"><strong>Actúa cuanto antes.</strong> Si detectas una pérdida, evita operaciones de limpieza y crea una rama en el commit correcto en cuanto lo encuentres.</div>
+          </section>
+
+          <section aria-labelledby="resumen">
+            <p class="section-kicker">05 · Resumen</p>
+            <h2 id="resumen">Tres comandos, una recuperación segura</h2>
+            <div class="command-summary">
+              <div><code>git reflog</code><span>Encuentra el estado anterior.</span></div>
+              <div><code>git show &lt;hash&gt;</code><span>Comprueba el commit.</span></div>
+              <div><code>git switch -c &lt;rama&gt; &lt;hash&gt;</code><span>Vuelve a hacerlo alcanzable.</span></div>
+            </div>
+          </section>
+
+          <section class="sources" aria-labelledby="fuentes">
+            <h2 id="fuentes">Fuente técnica</h2>
+            <p>Contenido contrastado con la <a href="https://git-scm.com/docs/git-reflog" target="_blank" rel="noopener noreferrer">documentación oficial de <code>git reflog</code></a> y el capítulo de <a href="https://git-scm.com/book/en/v2/Git-Internals-Maintenance-and-Data-Recovery" target="_blank" rel="noopener noreferrer">recuperación de datos de Pro Git</a>.</p>
+          </section>
+        </div>
+
+        <aside class="article-aside" aria-label="En este artículo">
+          <span>EN ESTE ARTÍCULO</span>
+          <a href="#problema">El problema</a>
+          <a href="#buscar">Localizar el commit</a>
+          <a href="#recuperar">Recuperarlo</a>
+          <a href="#limites">Límites del reflog</a>
+          <a href="#resumen">Resumen</a>
+        </aside>
+      </div>
+
+      <section class="slides-section" aria-labelledby="slides-title">
+        <div class="shell">
+          <div class="slides-heading">
+            <div><p class="eyebrow"><span></span> VERSIÓN VISUAL</p><h2 id="slides-title">El carrusel de TECH TIP #001</h2></div>
+            <p>Siete diapositivas para guardar o compartir.</p>
+          </div>
+          <div class="slides-grid">
+            <figure><img src="../../assets/posts/tech-tip-001/tech_tip_001_slide_01.webp" width="1254" height="1254" loading="lazy" alt="Portada: ¿Has perdido cambios en Git? Puede que no."><figcaption>01 · Portada</figcaption></figure>
+            <figure><img src="../../assets/posts/tech-tip-001/tech_tip_001_slide_02.webp" width="1254" height="1254" loading="lazy" alt="El problema después de ejecutar git reset --hard."><figcaption>02 · El problema</figcaption></figure>
+            <figure><img src="../../assets/posts/tech-tip-001/tech_tip_001_slide_03.webp" width="1254" height="1254" loading="lazy" alt="Git guarda más información mediante git reflog."><figcaption>03 · El descubrimiento</figcaption></figure>
+            <figure><img src="../../assets/posts/tech-tip-001/tech_tip_001_slide_04.webp" width="1254" height="1254" loading="lazy" alt="Ejemplo para localizar un hash en git reflog y recuperarlo."><figcaption>04 · El ejemplo</figcaption></figure>
+            <figure><img src="../../assets/posts/tech-tip-001/tech_tip_001_slide_05.webp" width="1254" height="1254" loading="lazy" alt="Casos en los que git reflog puede ayudarte."><figcaption>05 · Los usos</figcaption></figure>
+            <figure><img src="../../assets/posts/tech-tip-001/tech_tip_001_slide_06.webp" width="1254" height="1254" loading="lazy" alt="Idea final: antes de entrar en pánico, ejecuta git reflog."><figcaption>06 · La idea final</figcaption></figure>
+            <figure><img src="../../assets/posts/tech-tip-001/tech_tip_001_slide_07.webp" width="1254" height="1254" loading="lazy" alt="Cierre del carrusel de RivLabs."><figcaption>07 · Cierre</figcaption></figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="article-cta">
+        <div class="shell article-cta-inner">
+          <div><span>BUILD. LEARN. INSPIRE.</span><h2>Una idea tecnológica útil en menos de un minuto.</h2><p>Sigue a RivLabs para descubrir el próximo Tech Tip.</p></div>
+          <a href="https://www.instagram.com/rivlabs/" target="_blank" rel="noopener noreferrer">Seguir @rivlabs ↗</a>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <footer class="article-footer">
+    <div class="shell"><a href="../../">RivLabs</a><p>Build. Learn. Inspire.</p><span>Analítica anónima · Sin cookies</span></div>
+  </footer>
+  <script src="../../analytics.js" defer></script>
+</body>
+</html>
