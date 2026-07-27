@@ -1,0 +1,66 @@
+{
+  "updatedAt": "2026-07-27",
+  "profileUrl": "https://www.instagram.com/rivlabs/",
+  "posts": [
+    {
+      "id": "tech-tip-001",
+      "published": true,
+      "number": 1,
+      "series": "Tech Tips",
+      "seriesLabel": "TECH TIP #001",
+      "title": "¿Has perdido cambios en Git?",
+      "subtitle": "Puede que no.",
+      "topic": "git reflog",
+      "pillar": "Git",
+      "publishedDate": "2026-07-26",
+      "readingTime": "Menos de 1 min",
+      "summary": "Git conserva un historial local de los movimientos de HEAD que puede ayudarte a localizar commits y estados que ya no aparecen en el historial normal.",
+      "takeaway": "Antes de dar algo por perdido, consulta git reflog.",
+      "tags": ["Git", "Terminal"],
+      "slides": [
+        {
+          "src": "./assets/posts/tech-tip-001/tech_tip_001_slide_01.png",
+          "width": 1254,
+          "height": 1254,
+          "alt": "Portada: ¿Has perdido cambios en Git? Puede que no."
+        },
+        {
+          "src": "./assets/posts/tech-tip-001/tech_tip_001_slide_02.png",
+          "width": 1254,
+          "height": 1254,
+          "alt": "El problema: después de ejecutar git reset --hard parece que se han perdido todos los cambios."
+        },
+        {
+          "src": "./assets/posts/tech-tip-001/tech_tip_001_slide_03.png",
+          "width": 1254,
+          "height": 1254,
+          "alt": "El descubrimiento: Git guarda más información de la que imaginas mediante git reflog."
+        },
+        {
+          "src": "./assets/posts/tech-tip-001/tech_tip_001_slide_04.png",
+          "width": 1254,
+          "height": 1254,
+          "alt": "Ejemplo: ejecuta git reflog, identifica el hash y recupéralo con git checkout o crea una rama nueva."
+        },
+        {
+          "src": "./assets/posts/tech-tip-001/tech_tip_001_slide_05.png",
+          "width": 1254,
+          "height": 1254,
+          "alt": "Git reflog permite recuperar commits borrados, ramas eliminadas, resets y posiciones anteriores de HEAD."
+        },
+        {
+          "src": "./assets/posts/tech-tip-001/tech_tip_001_slide_06.png",
+          "width": 1254,
+          "height": 1254,
+          "alt": "Idea final: antes de entrar en pánico, ejecuta git reflog."
+        },
+        {
+          "src": "./assets/posts/tech-tip-001/tech_tip_001_slide_07.png",
+          "width": 1254,
+          "height": 1254,
+          "alt": "Cierre: ¿Conocías git reflog? Invitación a comentar, guardar y compartir."
+        }
+      ]
+    }
+  ]
+}
